@@ -36,4 +36,12 @@ public class SalaApplicationService implements SalaService {
         log.debug("[finish] SalaApplicationService - listarSalas");
         return salas.stream().map(salaMapper::toRequest).toList();
     }
+
+    @Override
+    public void deletarSala(String salaId) {
+        log.info("[start] SalaApplicationService - deletarSala com id: {}", salaId);
+        salaRepository.deletarPorId(salaId);
+        log.info("Deletado com sucesso a sala com id: {}", salaId);
+        log.debug("[finish] SalaApplicationService - deletarSala");
+    }
 }

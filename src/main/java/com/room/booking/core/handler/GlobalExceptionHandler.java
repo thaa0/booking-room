@@ -6,6 +6,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
@@ -66,7 +67,29 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                         .message("O EMAIL OU DOCUMENTO IDENTIFICADOR JÁ ESTÁ REGISTRADO").build());
     }
 
-    
+    @Override
+    protected ResponseEntity<Object> handleHttpMessageNotReadable(
+            HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+
+        log.warn("Erro ao ler mensagem HTTP: {}", ex.getMessage());
+
+        String mensagemErro = "Formato de dados inválido";
+
+        if (ex.getMessage() != null && ex.getMessage().contains("LocalDate")) {
+            mensagemErro = "Data inválida. Certifique-se de que a data existe e está no formato yyyy-MM-dd";
+        } else if (ex.getMessage() != null && ex.getMessage().contains("LocalTime")) {
+            mensagemErro = "Hora inválida. Certifique-se de que a hora está no formato HH:mm:ss";
+        }
+
+        ErrorApiResponse errorResponse = ErrorApiResponse.builder()
+                .description("INVALID DATA FORMAT")
+                .message(mensagemErro)
+                .build();
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(
             MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {

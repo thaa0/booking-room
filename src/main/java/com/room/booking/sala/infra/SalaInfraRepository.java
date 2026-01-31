@@ -7,6 +7,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.UUID;
 
 @Log4j2
 @Repository
@@ -29,5 +30,12 @@ public class SalaInfraRepository implements SalaRepository {
         log.info("Salas encontradas: {}", salas.size());
         log.debug("[finish] SalaInfraRepository - buscarTodas");
         return salas;
+    }
+
+    @Override
+    public void deletarPorId(String salaId) {
+        log.info("[start] SalaInfraRepository - deletarPorId");
+        salaJpaRepository.deleteById(UUID.fromString(salaId));
+        log.debug("[finish] SalaInfraRepository - deletarPorId");
     }
 }

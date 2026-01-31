@@ -1,6 +1,5 @@
 package com.room.booking.sala.application.controller.dto;
 
-import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.validation.annotation.Validated;

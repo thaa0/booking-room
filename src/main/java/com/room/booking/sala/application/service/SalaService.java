@@ -9,4 +9,5 @@ import java.util.UUID;
 public interface SalaService {
     void registrarSala(SalaRequest request, UUID id);
     List<SalaListResponse> listarSalas();
+    void deletarSala(String salaId);
 }

@@ -39,12 +39,11 @@ public class SalaController {
         return salas;
     }
 
-//    @DeleteMapping
-//    @ResponseStatus(HttpStatus.NO_CONTENT)
-//    public void deletarSala(@RequestParam("salaId") String salaId,
-//                            @AuthenticationPrincipal Usuario user) {
-//        log.info("[start] SalaController - deletarSala");
-//        salaService.deletarSala(salaId, user.getId());
-//        log.debug("[finish] SalaController - deletarSala");
-//    }
+    @DeleteMapping("/{salaId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deletarSala(@PathVariable String salaId) {
+        log.info("[start] SalaController - deletarSala");
+        salaService.deletarSala(salaId);
+        log.debug("[finish] SalaController - deletarSala");
+    }
 }
