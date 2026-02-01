@@ -75,10 +75,15 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
         String mensagemErro = "Formato de dados inválido";
 
-        if (ex.getMessage() != null && ex.getMessage().contains("LocalDate")) {
-            mensagemErro = "Data inválida. Certifique-se de que a data existe e está no formato yyyy-MM-dd";
-        } else if (ex.getMessage() != null && ex.getMessage().contains("LocalTime")) {
-            mensagemErro = "Hora inválida. Certifique-se de que a hora está no formato HH:mm:ss";
+        if (ex.getMessage() != null) {
+            if (ex.getMessage().contains("LocalDate")) {
+                mensagemErro = "Data inválida. Certifique-se de que a data existe e está no formato \"yyyy-MM-dd\" (entre aspas)";
+            } else if (ex.getMessage().contains("LocalTime") || ex.getMessage().contains("raw timestamp")) {
+                mensagemErro = "Hora inválida. Certifique-se de que os horários estão no formato \"HH:mm:ss\" (entre aspas). " +
+                        "Exemplo: \"horaInicio\": \"14:00:00\"";
+            } else if (ex.getMessage().contains("JSON parse error")) {
+                mensagemErro = "Erro ao processar JSON. Verifique se todos os valores de texto e horários estão entre aspas";
+            }
         }
 
         ErrorApiResponse errorResponse = ErrorApiResponse.builder()

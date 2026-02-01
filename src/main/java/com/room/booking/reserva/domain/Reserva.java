@@ -1,7 +1,6 @@
 package com.room.booking.reserva.domain;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -27,6 +26,8 @@ public class Reserva {
     private LocalTime horaInicio;
 
     private LocalTime horaFim;
+
+    private int numeroPessoas;
 
     private String nomeCliente;
 

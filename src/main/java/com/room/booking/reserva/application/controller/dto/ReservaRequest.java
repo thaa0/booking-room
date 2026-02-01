@@ -25,6 +25,7 @@ public class ReservaRequest {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss")
     private LocalTime horaFim;
 
+    private int numeroPessoas;
     private String nomeCliente;
     private String contatoCliente;
 }

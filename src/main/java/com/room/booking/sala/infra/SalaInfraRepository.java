@@ -1,9 +1,11 @@
 package com.room.booking.sala.infra;
 
+import com.room.booking.core.handler.APIException;
 import com.room.booking.sala.application.repository.SalaRepository;
 import com.room.booking.sala.domain.Sala;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -37,5 +39,14 @@ public class SalaInfraRepository implements SalaRepository {
         log.info("[start] SalaInfraRepository - deletarPorId");
         salaJpaRepository.deleteById(UUID.fromString(salaId));
         log.debug("[finish] SalaInfraRepository - deletarPorId");
+    }
+
+    @Override
+    public Sala buscarPorId(UUID salaId) {
+        log.info("[start] SalaInfraRepository - buscarPorId");
+        Sala sala = salaJpaRepository.findById(salaId)
+                .orElseThrow(() -> APIException.build(HttpStatus.NOT_FOUND, "Sala não encontrada com id: " + salaId));
+        log.debug("[finish] SalaInfraRepository - buscarPorId");
+        return sala;
     }
 }

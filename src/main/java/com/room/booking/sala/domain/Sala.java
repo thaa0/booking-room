@@ -2,6 +2,7 @@ package com.room.booking.sala.domain;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Positive;
 import lombok.*;
 
 import java.util.UUID;
@@ -21,7 +22,7 @@ public class Sala {
     @NotBlank(message = "Nome da sala não pode ser em branco")
     private String nome;
 
-    @NotBlank(message = "Capacidade da sala não pode ser em branco")
+    @Positive(message = "Capacidade da sala deve ser um número positivo")
     private int capacidade;
 
     @NotBlank(message = "Localização da sala não pode ser em branco")
