@@ -11,5 +11,9 @@ public interface ReservaRepository {
     void registraReserva(Reserva reserva);
     boolean verificaConflitoReserva(UUID salaId, LocalDate dataReserva, LocalTime horaInicio, LocalTime horaFim);
     List<Reserva> listarReservas();
+    List<Reserva> listarReservasPorSalaId(UUID salaId);
     void cancelarReserva(UUID reservaId);
+    Reserva buscarPorId(UUID reservaId);
+    void atualizarReserva(Reserva reserva);
 }
+

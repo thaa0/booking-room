@@ -13,6 +13,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -44,10 +45,89 @@ public class ReservaApplicationService implements ReservaService {
     }
 
     @Override
+    public List<ReservaListResponse> listarReservasPorSalaId(UUID salaId) {
+        log.info("[start] ReservaApplicationService - listarReservasPorSalaId para sala {}", salaId);
+        List<Reserva> reservas = reservaRepository.listarReservasPorSalaId(salaId);
+        log.debug("Encontradas {} reserva(s) para salaId: {}", reservas.size(), salaId);
+        log.debug("[finish] ReservaApplicationService - listarReservasPorSalaId");
+        return reservas.stream().map(reservaMapper::toRequest).toList();
+    }
+
+    @Override
     public void cancelarReserva(UUID reservaId) {
         log.info("[start] ReservaApplicationService - cancelarReserva");
         reservaRepository.cancelarReserva(reservaId);
         log.debug("[finish] ReservaApplicationService - cancelarReserva");
+    }
+
+    @Override
+    public void checkIn(UUID reservaId) {
+        log.info("[start] ReservaApplicationService - checkIn para reserva {}", reservaId);
+        Reserva reserva = reservaRepository.buscarPorId(reservaId);
+        LocalDateTime agora = LocalDateTime.now();
+
+        // Validar se a data da reserva é hoje
+        if (!reserva.getDataReserva().isEqual(agora.toLocalDate())) {
+            log.warn("Tentativa de check-in em data diferente da reserva. Data reserva: {}, Data atual: {}",
+                     reserva.getDataReserva(), agora.toLocalDate());
+            throw APIException.build(HttpStatus.BAD_REQUEST,
+                    "Check-in só pode ser realizado na data da reserva (" + reserva.getDataReserva() + ")");
+        }
+
+        // Validar se o horário atual é igual ou posterior ao horário de início
+        if (agora.toLocalTime().isBefore(reserva.getHoraInicio())) {
+            log.warn("Tentativa de check-in antes do horário agendado. Horário reserva: {}, Horário atual: {}",
+                     reserva.getHoraInicio(), agora.toLocalTime());
+            throw APIException.build(HttpStatus.BAD_REQUEST,
+                    "Check-in só pode ser realizado a partir do horário agendado (" + reserva.getHoraInicio() + ")");
+        }
+
+        if (reserva.getCheckIn() != null) {
+            log.warn("Check-in já realizado para reserva {}", reservaId);
+            throw APIException.build(HttpStatus.CONFLICT, "Check-in já foi realizado para esta reserva");
+        }
+
+        reserva.setCheckIn(agora);
+        reservaRepository.atualizarReserva(reserva);
+        log.info("Check-in realizado com sucesso para reserva {} às {}", reservaId, reserva.getCheckIn());
+        log.debug("[finish] ReservaApplicationService - checkIn");
+    }
+
+    @Override
+    public void checkOut(UUID reservaId) {
+        log.info("[start] ReservaApplicationService - checkOut para reserva {}", reservaId);
+        Reserva reserva = reservaRepository.buscarPorId(reservaId);
+        LocalDateTime agora = LocalDateTime.now();
+
+        // Validar se a data da reserva é hoje
+        if (!reserva.getDataReserva().isEqual(agora.toLocalDate())) {
+            log.warn("Tentativa de check-out em data diferente da reserva. Data reserva: {}, Data atual: {}",
+                     reserva.getDataReserva(), agora.toLocalDate());
+            throw APIException.build(HttpStatus.BAD_REQUEST,
+                    "Check-out só pode ser realizado na data da reserva (" + reserva.getDataReserva() + ")");
+        }
+
+        if (reserva.getCheckIn() == null) {
+            log.warn("Tentativa de check-out sem check-in para reserva {}", reservaId);
+            throw APIException.build(HttpStatus.BAD_REQUEST, "Não é possível fazer check-out sem ter feito check-in");
+        }
+
+        if (reserva.getCheckOut() != null) {
+            log.warn("Check-out já realizado para reserva {}", reservaId);
+            throw APIException.build(HttpStatus.CONFLICT, "Check-out já foi realizado para esta reserva");
+        }
+
+        // Validar se o horário atual é igual ou posterior ao horário de check-in
+        if (agora.isBefore(reserva.getCheckIn())) {
+            log.warn("Tentativa de check-out antes do check-in. Check-in: {}, Horário atual: {}",
+                     reserva.getCheckIn(), agora);
+            throw APIException.build(HttpStatus.BAD_REQUEST, "Check-out não pode ser anterior ao check-in");
+        }
+
+        reserva.setCheckOut(agora);
+        reservaRepository.atualizarReserva(reserva);
+        log.info("Check-out realizado com sucesso para reserva {} às {}", reservaId, reserva.getCheckOut());
+        log.debug("[finish] ReservaApplicationService - checkOut");
     }
 
     private void verificaDisponibilidadeEConflitos(Reserva reserva) {

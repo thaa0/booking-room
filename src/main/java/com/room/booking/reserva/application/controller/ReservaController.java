@@ -40,6 +40,15 @@ public class ReservaController {
         return reservas;
     }
 
+    @GetMapping("/sala/{salaId}")
+    public List<ReservaListResponse> listarReservasPorSalaId(@PathVariable UUID salaId,
+                                                              @AuthenticationPrincipal Usuario user) {
+        log.info("[start] ReservaController - listarReservasPorSalaId para sala {}", salaId);
+        List<ReservaListResponse> reservas = reservaService.listarReservasPorSalaId(salaId);
+        log.debug("[finish] ReservaController - listarReservasPorSalaId - {} reservas encontradas", reservas.size());
+        return reservas;
+    }
+
     @DeleteMapping("/{reservaId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void cancelarReserva(@PathVariable UUID reservaId) {
@@ -47,4 +56,21 @@ public class ReservaController {
         reservaService.cancelarReserva(reservaId);
         log.debug("[finish] ReservaController - cancelarReserva");
     }
+
+    @PatchMapping("/{reservaId}/check-in")
+    @ResponseStatus(HttpStatus.OK)
+    public void checkIn(@PathVariable UUID reservaId, @AuthenticationPrincipal Usuario user) {
+        log.info("[start] ReservaController - checkIn para reserva {}", reservaId);
+        reservaService.checkIn(reservaId);
+        log.debug("[finish] ReservaController - checkIn");
+    }
+
+    @PatchMapping("/{reservaId}/check-out")
+    @ResponseStatus(HttpStatus.OK)
+    public void checkOut(@PathVariable UUID reservaId, @AuthenticationPrincipal Usuario user) {
+        log.info("[start] ReservaController - checkOut para reserva {}", reservaId);
+        reservaService.checkOut(reservaId);
+        log.debug("[finish] ReservaController - checkOut");
+    }
 }
+

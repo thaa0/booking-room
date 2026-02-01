@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.UUID;
 
@@ -18,4 +19,6 @@ public class ReservaListResponse {
     private String nomeCliente;
     private String contatoCliente;
     private UUID criadorId;
+    private LocalDateTime checkIn;
+    private LocalDateTime checkOut;
 }

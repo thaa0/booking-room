@@ -9,5 +9,8 @@ import java.util.UUID;
 public interface ReservaService {
     void registraReserva(ReservaRequest request, String salaId, UUID id);
     List<ReservaListResponse> listarReservas();
+    List<ReservaListResponse> listarReservasPorSalaId(UUID salaId);
     void cancelarReserva(UUID reservaId);
+    void checkIn(UUID reservaId);
+    void checkOut(UUID reservaId);
 }
