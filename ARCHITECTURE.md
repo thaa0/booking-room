@@ -9,8 +9,8 @@
 ┌──────────────────┐         ┌──────────────────┐         ┌──────────────────┐
 │                  │         │                  │         │                  │
 │    FRONTEND      │◄───────►│     BACKEND      │◄───────►│   DATABASE H2    │
-│   (React/Vue/    │  HTTP   │   Spring Boot    │   JPA   │   (Embedded)     │
-│    Angular)      │  REST   │      Java 17     │         │                  │
+│    React         │  HTTP   │   Spring Boot    │   JPA   │   (Embedded)     │
+│                  │  REST   │      Java 17     │         │                  │
 │                  │         │                  │         │                  │
 └──────────────────┘         └──────────────────┘         └──────────────────┘
      localhost:3000          localhost:8080/api              ./data/
